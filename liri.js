@@ -7,8 +7,8 @@
 //these add other programs to this one
 var dataKeys = require("./keys.js");
 var fs = require('fs'); //file system
-var twitter = require('twitter');
-var spotify = require('spotify');
+var Twitter = require('twitter');
+var Spotify = require('node-spotify-api');
 var request = require('request');
 
 
@@ -23,6 +23,12 @@ var writeToLog = function(data) {
     console.log("log.txt was updated!");
   });
 }
+
+// Initialize the spotify API client using our client id and secret
+var spotify = new Spotify({
+  id: "34e84d93de6a4650815e5420e0361fd3",
+  secret: "5162cd8b5cf940f48702dffe096c2acb"
+});
 
 //Creates a function for finding artist name from spotify
 var getArtistNames = function(artist) {
@@ -43,24 +49,24 @@ var getMeSpotify = function(songName) {
     }
 
     var songs = data.tracks.items;
-    var data = []; //empty array to hold data
+    var allSongs = []; //empty array to hold data
 
     for (var i = 0; i < songs.length; i++) {
-      data.push({
+      allSongs.push({
         'artist(s)': songs[i].artists.map(getArtistNames),
         'song name: ': songs[i].name,
         'preview song: ': songs[i].preview_url,
         'album: ': songs[i].album.name,
       });
     }
-    console.log(data);
-    writeToLog(data);
+    console.log("allSongs: >>>", allSongs);
+    writeToLog(allSongs);
   });
 };
 
 
 var getTweets = function() {
-  var client = new twitter(dataKeys.twitterKeys);
+  var client = new Twitter(dataKeys.twitterKeys);
 
   var params = { screen_name: 'ednas', count: 10 };
 
@@ -150,5 +156,5 @@ var pick = function(caseData, functionData) {
 var runThis = function(argOne, argTwo) {
   pick(argOne, argTwo);
 };
-
+console.log(process.argv, "process.argv <<<<<<<<<<<<<<<<<<");
 runThis(process.argv[2], process.argv[3]);
